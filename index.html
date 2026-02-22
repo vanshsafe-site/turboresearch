@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TurboResearch — By Vansh Garg</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Turbo C++ Code Archive by Vansh Garg">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --amber: #ffcc00;
+            --orange: #ff6600;
+            --red-hot: #ff3300;
+            --dark: #0a0a0a;
+            --darker: #060606;
+            --card-bg: #111111;
+            --card-border: #222;
+            --text: #e8e8e8;
+            --muted: #888;
+            --glow: rgba(255, 204, 0, 0.15);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'Exo 2', sans-serif;
+            background-color: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* ─── SCANLINE OVERLAY ─── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.07) 2px,
+                rgba(0,0,0,0.07) 4px
+            );
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ─── HEADER ─── */
+        header {
+            background: var(--darker);
+            border-bottom: 2px solid var(--amber);
+            padding: 48px 24px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,204,0,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,102,0,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: var(--orange);
+            color: #000;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 4px 14px;
+            border-radius: 2px;
+            margin-bottom: 18px;
+        }
+
+        header h1 {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: clamp(36px, 8vw, 72px);
+            margin: 0 0 10px;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, var(--amber) 0%, var(--orange) 60%, var(--red-hot) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            line-height: 1.1;
+        }
+
+        header p {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--muted);
+            font-size: clamp(12px, 2.5vw, 15px);
+            letter-spacing: 3px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        /* ─── TICKER ─── */
+        .ticker-wrap {
+            background: var(--amber);
+            overflow: hidden;
+            padding: 8px 0;
+            white-space: nowrap;
+        }
+
+        .ticker-text {
+            display: inline-block;
+            animation: ticker 22s linear infinite;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            color: #000;
+            letter-spacing: 2px;
+        }
+
+        @keyframes ticker {
+            from { transform: translateX(100vw); }
+            to   { transform: translateX(-100%); }
+        }
+
+        /* ─── DISCLAIMER ─── */
+        .disclaimer {
+            background: #1a1200;
+            border-left: 4px solid var(--orange);
+            border-bottom: 1px solid #2a2000;
+            padding: 16px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: #cca040;
+            line-height: 1.6;
+        }
+
+        .disclaimer strong { color: var(--amber); }
+
+        /* ─── CONTAINER ─── */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 48px 20px 60px;
+        }
+
+        .section-label {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: var(--orange);
+            text-transform: uppercase;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to right, var(--orange), transparent);
+        }
+
+        /* ─── CARD ─── */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            margin-bottom: 28px;
+            overflow: hidden;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(to right, var(--amber), var(--orange));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            border-color: #333;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px var(--glow);
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-header {
+            padding: 20px 24px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .q-number {
+            flex-shrink: 0;
+            font-family: 'Orbitron', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--amber), var(--orange));
+            color: #000;
+            padding: 4px 10px;
+            border-radius: 3px;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        .card-header h2 {
+            margin: 0;
+            font-size: clamp(13px, 2.5vw, 15px);
+            font-weight: 400;
+            color: #d0d0d0;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .toggle-btn {
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            border: 1px solid #333;
+            border-radius: 50%;
+            background: #1a1a1a;
+            color: var(--amber);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.3s;
+            cursor: pointer;
+        }
+
+        .card.open .toggle-btn {
+            background: var(--amber);
+            color: #000;
+            transform: rotate(45deg);
+        }
+
+        .card-body {
+            display: none;
+            padding: 0 24px 24px;
+            animation: fadeDown 0.3s ease;
+        }
+
+        .card.open .card-body { display: block; }
+
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── IMAGE WRAPPER ─── */
+        .img-wrapper {
+            position: relative;
+            background: #000;
+            border: 1px solid #2a2a2a;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .img-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.75);
+            border: 1px solid var(--orange);
+            color: var(--orange);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            padding: 3px 10px;
+            border-radius: 2px;
+            z-index: 2;
+        }
+
+        .code-image {
+            width: 100%;
+            display: block;
+            border-radius: 0;
+            transition: transform 0.4s ease;
+        }
+
+        .img-wrapper:hover .code-image {
+            transform: scale(1.015);
+        }
+
+        /* Fullscreen overlay */
+        .img-wrapper {
+            cursor: zoom-in;
+        }
+
+        /* ─── LIGHTBOX ─── */
+        #lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        #lightbox.active { display: flex; }
+
+        #lightbox img {
+            max-width: 95vw;
+            max-height: 90vh;
+            border-radius: 6px;
+            border: 2px solid var(--amber);
+            box-shadow: 0 0 60px rgba(255,204,0,0.2);
+        }
+
+        #lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            color: var(--amber);
+            font-size: 32px;
+            cursor: pointer;
+            font-family: 'Share Tech Mono', monospace;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        #lightbox-close:hover { color: #fff; }
+
+        /* ─── FOOTER ─── */
+        footer {
+            background: var(--darker);
+            border-top: 1px solid #1a1a1a;
+            text-align: center;
+            padding: 28px 20px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: 2px;
+        }
+
+        footer span { color: var(--amber); }
+
+        /* ─── MEDIA QUERIES ─── */
+        @media (max-width: 600px) {
+            header { padding: 36px 16px 28px; }
+
+            .container { padding: 32px 14px 48px; }
+
+            .card-header { padding: 16px 16px 12px; gap: 10px; }
+            .card-body   { padding: 0 16px 18px; }
+
+            .q-number { font-size: 10px; padding: 3px 8px; }
+
+            .card-header h2 { font-size: 13px; }
+
+            .disclaimer { padding: 14px 16px; font-size: 12px; }
+
+            .section-label { font-size: 10px; }
+        }
+
+        @media (max-width: 400px) {
+            header h1 { font-size: 30px; letter-spacing: 2px; }
+            header p  { font-size: 10px; letter-spacing: 2px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LIGHTBOX -->
+<div id="lightbox" role="dialog" aria-modal="true">
+    <span id="lightbox-close" title="Close" aria-label="Close">&times;</span>
+    <img id="lightbox-img" src="" alt="Code screenshot fullscreen">
+</div>
+
+<!-- HEADER -->
+<header>
+    <div class="header-badge">Turbo C++ Archive</div>
+    <h1>TurboResearch</h1>
+    <p>Compiled Knowledge. Zero Error.</p>
+</header>
+
+<!-- TICKER -->
+<div class="ticker-wrap" aria-hidden="true">
+    <span class="ticker-text">
+        ⚡ TURBO C++ PROGRAMS &nbsp;|&nbsp; RESTART TURBO C++ IF CODE FAILS TO RUN &nbsp;|&nbsp;
+        COMPILED BY VANSH GARG &nbsp;|&nbsp; NOT COMPATIBLE WITH MODERN COMPILERS &nbsp;|&nbsp;
+        CLICK ANY IMAGE TO ZOOM &nbsp;|&nbsp; ⚡ TURBO C++ PROGRAMS &nbsp;|&nbsp;
+    </span>
+</div>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer" role="alert">
+    ⚠️ &nbsp;If any code does not run properly, <strong>restart Turbo C++.</strong>
+    These programs are designed specifically for Turbo C++ and may not work on modern compilers.
+    All research and compilation by <strong>Vansh Garg</strong>.
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container">
+    <div class="section-label">// Program Archive</div>
+
+    <!-- Q1 -->
+    <div class="card" id="card1">
+        <div class="card-header" onclick="toggleCard('card1')" role="button" tabindex="0" aria-expanded="false">
+            <span class="q-number">Q1</span>
+            <h2>WAP that takes integer, char &amp; float from user and displays it on screen</h2>
+            <div class="toggle-btn" aria-hidden="true">+</div>
+        </div>
+        <div class="card-body">
+            <div class="img-wrapper" onclick="openLightbox('code1.jpeg')">
+                <span class="img-label">CODE</span>
+                <img src="code1.jpeg" alt="Q1 Answer Screenshot" class="code-image" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="card" id="card2">
+        <div class="card-header" onclick="toggleCard('card2')" role="button" tabindex="0" aria-expanded="false">
+            <span class="q-number">Q2</span>
+            <h2>WAP that takes radius of a circle and calculates area and perimeter</h2>
+            <div class="toggle-btn" aria-hidden="true">+</div>
+        </div>
+        <div class="card-body">
+            <div class="img-wrapper" onclick="openLightbox('code2.jpeg')">
+                <span class="img-label">CODE</span>
+                <img src="code2.jpeg" alt="Q2 Answer Screenshot" class="code-image" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="card" id="card3">
+        <div class="card-header" onclick="toggleCard('card3')" role="button" tabindex="0" aria-expanded="false">
+            <span class="q-number">Q3</span>
+            <h2>WAP that takes 4 numbers from the user and calculates their sum and average</h2>
+            <div class="toggle-btn" aria-hidden="true">+</div>
+        </div>
+        <div class="card-body">
+            <div class="img-wrapper" onclick="openLightbox('code3.jpeg')">
+                <span class="img-label">CODE</span>
+                <img src="code3.jpeg" alt="Q3 Answer Screenshot" class="code-image" loading="lazy">
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+    © 2026 <span>TurboResearch</span> &nbsp;|&nbsp; Designed &amp; Developed by <span>Vansh Garg</span>
+</footer>
+
+<script>
+    function toggleCard(id) {
+        const card = document.getElementById(id);
+        const btn  = card.querySelector('.card-header');
+        const isOpen = card.classList.toggle('open');
+        btn.setAttribute('aria-expanded', isOpen);
+    }
+
+    function openLightbox(src) {
+        const lb  = document.getElementById('lightbox');
+        const img = document.getElementById('lightbox-img');
+        img.src = src;
+        lb.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    document.getElementById('lightbox').addEventListener('click', function(e) {
+        if (e.target === this) closeLightbox();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeLightbox();
+    });
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // Keyboard support for card headers
+    document.querySelectorAll('.card-header').forEach(header => {
+        header.addEventListener('keydown', e => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                header.click();
+            }
+        });
+    });
+</script>
+</body>
+</html>
